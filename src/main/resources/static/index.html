@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f4f5f7"><title>城市共享站 · 物资服务</title>
+<link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/assets/workspace.css">
+</head>
+<body>
+<section id="loginView" class="login-page">
+  <header class="login-brand"><b>城市共享站</b><span>社区物资服务系统</span></header>
+  <form id="loginForm" class="login-form">
+    <h1>账号登录</h1><p>登录后可提交物资需求、查询共享站。</p>
+    <label for="username">账号</label><input id="username" name="username" autocomplete="username" value="citizen" required>
+    <label for="password">密码</label><input id="password" name="password" type="password" autocomplete="current-password" value="User@123" required>
+    <button type="submit" class="primary-btn"><span>登录</span></button>
+    <p id="loginError" role="alert" class="login-error"></p>
+    <div class="quick-users"><span>演示账号</span><button type="button" data-user="citizen" data-password="User@123">居民</button><button type="button" data-user="admin" data-password="Admin@123">工作人员</button></div>
+  </form>
+  <footer class="login-foot">城市共享站 · 本地演示环境</footer>
+</section>
+<div id="appView" class="app-shell hidden">
+  <header class="app-header"><div class="identity"><strong>城市共享站</strong><span>物资服务</span></div><div class="account"><span id="displayName"></span><button id="logoutBtn">退出登录</button></div></header>
+  <aside class="sidebar"><nav aria-label="主导航">
+    <button class="nav-item active" data-view="dashboard">求助工作台</button>
+    <button class="nav-item" data-view="requests">我的记录</button>
+    <button class="nav-item" data-view="stations">共享站查询</button>
+    <button class="nav-item admin-only" data-action="allocate">物资分配</button>
+  </nav><div class="sidebar-note">城市共享站<br><span>本地演示环境</span></div></aside>
+  <main>
+    <div class="breadcrumb">物资服务 <span>/</span> <b id="pageTitle">求助工作台</b></div>
+    <section id="dashboardView" class="view active">
+      <div class="page-heading"><div><h1>求助工作台</h1><p>提交需求后，可在此查看本机保存的求助记录。</p></div><button class="primary-btn" data-action="new-request">新建求助</button></div>
+      <div class="workspace-columns">
+        <section class="records-panel">
+          <div class="records-heading"><h2>求助记录</h2><div class="heading-actions"><button class="text-btn" data-action="refresh-requests">刷新状态</button><button class="text-btn" data-view="requests">全部记录</button></div></div>
+          <div class="record-summary">待分配 <b id="requestCount">0</b><span id="summaryScope">仅统计当前浏览器中的记录</span></div>
+          <div id="activityList" class="table-scroll"></div>
+          <div class="table-foot"><span id="recordScope">提交记录保存在当前浏览器，换设备后不会自动同步。</span></div>
+        </section>
+        <aside class="help-column">
+          <h2>填写说明</h2>
+          <ol><li><b>选择所在辖区</b><p>分配时优先匹配同辖区共享站。</p></li><li><b>填写物资和数量</b><p>按实际需求填写；不同类型分别提交。</p></li><li><b>等待工作人员分配</b><p>请保留求助编号，方便后续查询。</p></li></ol>
+          <div class="station-shortcut"><h2>查找共享站</h2><p>查看辖区内的站点及接纳人数。</p><button class="text-btn" data-view="stations">进入站点查询</button></div>
+        </aside>
+      </div>
+    </section>
+    <section id="requestsView" class="view">
+      <div class="page-heading"><div><h1 id="recordsTitle">我的记录</h1><p><span id="recordsDescription">当前账号在本机提交的求助。</span></p></div><button class="primary-btn" data-action="new-request">新建求助</button></div>
+      <section class="records-panel"><div class="filter-row"><label for="requestSearch">求助编号</label><input id="requestSearch" type="search" placeholder="输入编号查询"><label for="statusFilter">处理状态</label><select id="statusFilter"><option value="">全部状态</option><option value="PENDING">等待调度</option><option value="PARTIALLY_ALLOCATED">部分分配</option><option value="ALLOCATED">已完成分配</option></select><button class="text-btn" id="clearFilters">清空筛选</button><button class="ghost-btn" data-action="refresh-requests">刷新状态</button></div><div id="requestTable" class="table-scroll"></div><div class="pagination"><span id="recordTotal"></span><div><button class="ghost-btn" id="prevPage">上一页</button><span id="pageNumber"></span><button class="ghost-btn" id="nextPage">下一页</button></div></div></section>
+    </section>
+    <section id="stationsView" class="view">
+      <div class="page-heading"><div><h1>共享站查询</h1><p>查询站点所在辖区与当前接纳人数。</p></div><button class="ghost-btn" id="refreshBtn">刷新</button></div>
+      <section class="records-panel"><div class="filter-row"><span>所在辖区</span><div class="district-tabs"><button class="active" data-district="浦东新区">浦东新区</button><button data-district="徐汇区">徐汇区</button></div><span class="query-count">共 <b id="stationCount">—</b> 个站点</span></div><div id="stationGrid" class="table-scroll"></div><div class="table-foot">查询时间：<span id="lastRefresh">—</span></div></section>
+    </section>
+  </main>
+</div>
+<dialog id="requestModal" class="modal" aria-labelledby="requestTitle"><form id="requestForm">
+<header><h2 id="requestTitle">新建求助</h2><button type="button" class="close-btn" data-close="requestModal" aria-label="关闭">×</button></header>
+<div class="form-body"><p class="form-note">请按实际需求填写，提交后由工作人员分配。</p><label for="district">所在辖区</label><select id="district" name="district"><option>浦东新区</option><option>徐汇区</option></select>
+<label for="category">物资类型</label><select id="category" name="category"><option value="WATER">饮用水</option><option value="FOOD">食品</option><option value="MEDICINE">医疗物资</option><option value="POWER">应急电力</option><option value="HYGIENE">卫生用品</option></select>
+<label for="quantity">需求数量</label><input id="quantity" name="quantity" type="number" min="1" max="10000" value="20" required>
+<fieldset><legend>紧急程度</legend><label><input type="radio" name="priority" value="NORMAL" checked> 普通</label><label><input type="radio" name="priority" value="HIGH"> 紧急</label><label><input type="radio" name="priority" value="CRITICAL"> 特急</label></fieldset></div>
+<footer><button type="button" class="ghost-btn" data-close="requestModal">取消</button><button type="submit" class="primary-btn">提交求助</button></footer>
+</form></dialog>
+<dialog id="allocateModal" class="modal" aria-labelledby="allocateTitle"><form id="allocateForm">
+<header><h2 id="allocateTitle">物资分配</h2><button type="button" class="close-btn" data-close="allocateModal" aria-label="关闭">×</button></header><div class="form-body"><p class="form-note">按物资有效期顺序分配可用库存。</p><label for="requestNo">求助编号</label><input id="requestNo" name="requestNo" placeholder="请输入完整求助编号" required></div>
+<footer><button type="button" class="ghost-btn" data-close="allocateModal">取消</button><button type="submit" class="primary-btn">确认分配</button></footer></form></dialog>
+<dialog id="detailModal" class="modal" aria-labelledby="detailTitle"><header><h2 id="detailTitle">求助详情</h2><button type="button" class="close-btn" data-close="detailModal" aria-label="关闭">×</button></header><div id="detailBody" class="form-body"></div><footer><button type="button" class="ghost-btn" data-close="detailModal">关闭</button></footer></dialog>
+<div id="toasts" class="toast-stack" aria-live="polite"></div>
+<script src="/assets/app.js" defer></script>
+</body></html>
