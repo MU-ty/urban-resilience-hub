@@ -3,7 +3,7 @@ let submissionAttempt;
 const state = {
   token: localStorage.getItem('resilience.token'),
   user: null,
-  district: '浦东新区',
+  district: '象山区',
   requests: [], page: 0, total: 0, loading: false, stationVersion: 0, refreshVersion: 0, loadedPage: 0
 };
 
@@ -106,6 +106,7 @@ async function login(event) {
 async function loadStations(district) {
   state.district = district;
   const version = ++state.stationVersion;
+  window.stationMap?.clear('正在查询站点…');
   $('#stationGrid').innerHTML = '<div class="empty-state" role="status">正在查询站点…</div>';
   $('#stationCount').textContent = '—';
   try {
@@ -117,11 +118,13 @@ async function loadStations(district) {
   } catch (error) {
     if (version !== state.stationVersion) return;
     $('#lastRefresh').textContent = '查询失败';
+    window.stationMap?.clear('站点加载失败，请点击刷新重试。');
     $('#stationGrid').innerHTML = `<div class="empty-state"><b>站点查询失败</b>${escapeHtml(error.message)}<br><button class="text-btn" data-action="retry-stations">重新查询</button></div>`;
   }
 }
 
 function renderStations(stations) {
+  window.stationMap?.render(stations);
   $('#stationGrid').innerHTML = stations.length ? `<table><thead><tr><th>站点名称</th><th>所在辖区</th><th>已接纳人数</th><th>总容量</th><th>剩余名额</th></tr></thead><tbody>${stations.map(station => `<tr><td>${escapeHtml(station.name)}</td><td>${escapeHtml(station.district)}</td><td>${escapeHtml(station.occupancy)} 人</td><td>${escapeHtml(station.capacity)} 人</td><td>${Math.max(0, station.capacity - station.occupancy)} 人</td></tr>`).join('')}</tbody></table>` : '<div class="empty-state"><b>暂无站点</b>可切换辖区重新查询。</div>';
 }
 function categoryName(value) { return ({ WATER: '饮用水', FOOD: '食品', MEDICINE: '医疗物资', POWER: '应急电力', HYGIENE: '卫生用品' })[value] || value; }
@@ -192,7 +195,7 @@ function switchView(name) {
   $('#pageTitle').textContent = ({ dashboard: '求助工作台', requests: state.user?.role === 'ADMIN' ? '求助记录' : '我的记录', stations: '共享站查询' })[name] || '求助工作台';
   $$('.nav-item[data-view]').forEach(item => { if (item.dataset.view === name) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current'); });
   $('.sidebar').classList.remove('open');
-  window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  window.scrollTo({ top: 0, left: 0, behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
 }
 
 document.addEventListener('click', event => {

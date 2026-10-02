@@ -1,10 +1,16 @@
-# Urban Resilience Hub（城市韧性共享站）
+# Urban Resilience Hub（桂林韧性共享站）
+
+演示场景设在桂林，覆盖象山区、七星区，包含“象山社区共享站”和“七星社区物资仓”。站点及坐标为教学演示数据，不代表真实救助地点。
+
+已有数据库通过启动时自动执行的 `V3__guilin_demo_scenario.sql` 更新演示站点和历史求助辖区，保留库存与分配记录；全新数据库依次执行 V1、V2、V3。不要修改已执行的 V1。升级后旧辖区的 Redis 查询缓存最多保留 330 秒，等待过期后旧查询返回空结果。`Asia/Shanghai` 是中国标准时区标识，桂林同样使用该时区。
 
 一个可运行、纯 Java 的 Spring Boot 后端项目。它解决的不是常见的商城下单，而是：灾害或极端天气发生时，居民提交物资请求，平台从同辖区共享站按“先过期先出库（FEFO）”动态锁定物资，并以可靠事件驱动通知。
 
 这个场景天然包含后端面试最爱追问的库存并发、一致性、缓存、幂等、消息重复、鉴权、数据库索引和故障降级。
 
 ## 技术栈
+
+共享站查询页提供本地 SVG 示意地图：站点坐标由接口返回，支持拖动、方向键平移、缩放、复位、站点容量详情及辖区求助入口。底图道路与河流为示意，不可用于导航；无需地图密钥。页面、弹窗和加载提示配有轻量动效，并支持系统“减少动态效果”。地图测试：`node --test tests/station-map.test.cjs`。
 
 - Java 21、Spring Boot 4.1.1、Spring MVC、Bean Validation
 - Spring Data JPA / Hibernate、MySQL 8.4、Flyway
@@ -82,7 +88,7 @@ curl -s http://localhost:8080/api/relief-requests \
   -H "Authorization: Bearer $TOKEN" \
   -H 'Idempotency-Key: demo-request-001' \
   -H 'Content-Type: application/json' \
-  -d '{"district":"浦东新区","category":"WATER","quantity":20,"priority":"HIGH"}'
+  -d '{"district":"象山区","category":"WATER","quantity":20,"priority":"HIGH"}'
 ```
 
 管理员登录后执行分配（替换编号）：
@@ -96,7 +102,7 @@ curl -s -X POST http://localhost:8080/api/relief-requests/RR20260930XXXXXXXXXXXX
 
 | 方法 | 路径 | 权限 | 目的 |
 |---|---|---|---|
-| `GET` | `/api/shelters?district=浦东新区` | 登录 | Redis Cache Aside 查询 |
+| `GET` | `/api/shelters?district=象山区` | 登录 | Redis Cache Aside 查询 |
 | `GET` | `/api/relief-requests/{requestNo}` | 记录所有者或 ADMIN | 不可见记录返回 404 |
 | `GET` | `/api/relief-requests?page=0&size=20` | 登录 | 居民仅本人；支持 keyword、status；size 最大 100 |
 | `POST` | `/api/relief-requests/{requestNo}/allocate` | ADMIN | 并发安全分配 |

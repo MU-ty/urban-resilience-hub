@@ -13,7 +13,7 @@ class ReliefRequestServiceTest {
     ReliefRequestRepository requests = mock(ReliefRequestRepository.class);
     UserRepository users = mock(UserRepository.class);
     ReliefRequestService service = new ReliefRequestService(requests, users);
-    ReliefRequest request = new ReliefRequest("RR1", 1L, "浦东新区", SupplyCategory.WATER, 20, Priority.NORMAL);
+    ReliefRequest request = new ReliefRequest("RR1", 1L, "象山区", SupplyCategory.WATER, 20, Priority.NORMAL);
     @BeforeEach void init() {
         AppUser user = mock(AppUser.class);
         when(user.getId()).thenReturn(2L);
@@ -28,22 +28,22 @@ class ReliefRequestServiceTest {
         verifyNoInteractions(users);
     }
     @Test void ownerCanReadDetail() {
-        var own = new ReliefRequest("RR2", 2L, "浦东新区", SupplyCategory.WATER, 20, Priority.NORMAL);
+        var own = new ReliefRequest("RR2", 2L, "象山区", SupplyCategory.WATER, 20, Priority.NORMAL);
         when(requests.findByRequestNo("RR2")).thenReturn(Optional.of(own));
         assertThat(service.getVisible("RR2", "citizen", false)).isSameAs(own);
     }
     @Test void sameKeyAndBodyReturnsExistingRequest() {
         when(requests.findByRequesterIdAndIdempotencyKey(2L,"key")).thenReturn(Optional.of(request));
-        assertThat(service.replay("citizen", "key", new ReliefRequestService.CreateCommand("浦东新区", SupplyCategory.WATER, 20, Priority.NORMAL))).contains(request);
+        assertThat(service.replay("citizen", "key", new ReliefRequestService.CreateCommand("象山区", SupplyCategory.WATER, 20, Priority.NORMAL))).contains(request);
     }
     @Test void sameKeyWithDifferentBodyConflicts() {
         when(requests.findByRequesterIdAndIdempotencyKey(2L,"key")).thenReturn(Optional.of(request));
-        assertThatThrownBy(() -> service.replay("citizen", "key", new ReliefRequestService.CreateCommand("浦东新区", SupplyCategory.WATER, 21, Priority.NORMAL)))
+        assertThatThrownBy(() -> service.replay("citizen", "key", new ReliefRequestService.CreateCommand("象山区", SupplyCategory.WATER, 21, Priority.NORMAL)))
                 .hasMessageContaining("不同的请求内容");
     }
     @Test void createPersistsIdempotencyKeyAndOwner() {
         when(requests.saveAndFlush(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        var created = service.create("citizen", "unique-key", new ReliefRequestService.CreateCommand("浦东新区", SupplyCategory.WATER, 20, Priority.NORMAL));
+        var created = service.create("citizen", "unique-key", new ReliefRequestService.CreateCommand("象山区", SupplyCategory.WATER, 20, Priority.NORMAL));
         assertThat(created.getIdempotencyKey()).isEqualTo("unique-key");
         assertThat(created.getRequesterId()).isEqualTo(2L);
         assertThat(created.getStatus()).isEqualTo(RequestStatus.PENDING);

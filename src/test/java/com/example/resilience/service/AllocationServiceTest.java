@@ -14,7 +14,7 @@ class AllocationServiceTest {
         var lots = mock(SupplyLotRepository.class);
         var allocations = mock(AllocationRepository.class);
         var outbox = mock(OutboxRepository.class);
-        var request = new ReliefRequest("RR1",1L,"浦东新区",SupplyCategory.WATER,20,Priority.NORMAL);
+        var request = new ReliefRequest("RR1",1L,"象山区",SupplyCategory.WATER,20,Priority.NORMAL);
         request.allocated(true);
         when(requests.findForUpdate("RR1")).thenReturn(Optional.of(request));
         assertThatThrownBy(() -> new AllocationService(requests,lots,allocations,outbox).allocate("RR1"))

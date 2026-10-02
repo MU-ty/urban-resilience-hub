@@ -28,7 +28,7 @@ function setup(fetch) {
 const response = data => ({ ok: true, status: 200, json: async () => ({ code: 'OK', data }) });
 
 test('admin loads server page and renders row actions', async () => {
-  const app = setup(async () => response({ content: [{requestNo:'RR1',category:'FOOD',quantity:2,district:'浦东新区',status:'PENDING'}], totalElements:21 }));
+  const app = setup(async () => response({ content: [{requestNo:'RR1',category:'FOOD',quantity:2,district:'象山区',status:'PENDING'}], totalElements:21 }));
   await app.run('refreshRequests()');
   assert.match(app.element('#activityList').innerHTML, /data-allocate="RR1"/);
   assert.equal(app.element('#nextPage').disabled, false);

@@ -20,6 +20,8 @@ public class Shelter {
     public Long getId() { return id; }
     public String getName() { return name; }
     public String getDistrict() { return district; }
+    public BigDecimal getLatitude() { return latitude; }
+    public BigDecimal getLongitude() { return longitude; }
     public int getCapacity() { return capacity; }
     public int getOccupancy() { return occupancy; }
 }

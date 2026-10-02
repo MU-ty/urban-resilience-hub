@@ -2,12 +2,12 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f4f5f7"><title>城市共享站 · 物资服务</title>
-<link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/assets/workspace.css">
+<meta name="theme-color" content="#f4f5f7"><title>桂林共享站 · 物资服务</title>
+<link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/assets/workspace.css"><link rel="stylesheet" href="/assets/map.css">
 </head>
 <body>
 <section id="loginView" class="login-page">
-  <header class="login-brand"><b>城市共享站</b><span>社区物资服务系统</span></header>
+  <header class="login-brand"><b>桂林共享站</b><span>社区物资服务系统</span></header>
   <form id="loginForm" class="login-form">
     <h1>账号登录</h1><p>登录后可提交物资需求、查询共享站。</p>
     <label for="username">账号</label><input id="username" name="username" autocomplete="username" value="citizen" required>
@@ -16,16 +16,16 @@
     <p id="loginError" role="alert" class="login-error"></p>
     <div class="quick-users"><span>演示账号</span><button type="button" data-user="citizen" data-password="User@123">居民</button><button type="button" data-user="admin" data-password="Admin@123">工作人员</button></div>
   </form>
-  <footer class="login-foot">城市共享站 · 本地演示环境</footer>
+  <footer class="login-foot">桂林共享站 · 本地演示环境</footer>
 </section>
 <div id="appView" class="app-shell hidden">
-  <header class="app-header"><div class="identity"><strong>城市共享站</strong><span>物资服务</span></div><div class="account"><span id="displayName"></span><button id="logoutBtn">退出登录</button></div></header>
+  <header class="app-header"><div class="identity"><strong>桂林共享站</strong><span>物资服务</span></div><div class="account"><span id="displayName"></span><button id="logoutBtn">退出登录</button></div></header>
   <aside class="sidebar"><nav aria-label="主导航">
     <button class="nav-item active" data-view="dashboard">求助工作台</button>
     <button class="nav-item" data-view="requests">我的记录</button>
     <button class="nav-item" data-view="stations">共享站查询</button>
     <button class="nav-item admin-only" data-action="allocate">物资分配</button>
-  </nav><div class="sidebar-note">城市共享站<br><span>本地演示环境</span></div></aside>
+  </nav><div class="sidebar-note">桂林共享站<br><span>本地演示环境</span></div></aside>
   <main>
     <div class="breadcrumb">物资服务 <span>/</span> <b id="pageTitle">求助工作台</b></div>
     <section id="dashboardView" class="view active">
@@ -50,13 +50,21 @@
     </section>
     <section id="stationsView" class="view">
       <div class="page-heading"><div><h1>共享站查询</h1><p>查询站点所在辖区与当前接纳人数。</p></div><button class="ghost-btn" id="refreshBtn">刷新</button></div>
-      <section class="records-panel"><div class="filter-row"><span>所在辖区</span><div class="district-tabs"><button class="active" data-district="浦东新区">浦东新区</button><button data-district="徐汇区">徐汇区</button></div><span class="query-count">共 <b id="stationCount">—</b> 个站点</span></div><div id="stationGrid" class="table-scroll"></div><div class="table-foot">查询时间：<span id="lastRefresh">—</span></div></section>
+      <section class="records-panel"><div class="filter-row"><span>所在辖区</span><div class="district-tabs"><button class="active" data-district="象山区">象山区</button><button data-district="七星区">七星区</button></div><span class="query-count">共 <b id="stationCount">—</b> 个站点</span></div>
+        <div class="station-map-layout">
+          <div class="map-panel"><div class="map-toolbar"><h2>桂林 · 站点分布</h2><div><button class="ghost-btn" id="mapZoomOut" aria-label="缩小地图">−</button><button class="ghost-btn" id="mapZoomIn" aria-label="放大地图">＋</button><button class="ghost-btn" id="mapReset">复位</button></div></div>
+            <div id="stationMap" class="station-map" tabindex="0" aria-label="站点示意地图，可拖动或用方向键平移，使用加减按钮缩放"></div>
+            <p class="map-caption">示意地图 · 站点为教学数据，不代表真实救助地点。拖动平移，点击站点查看详情。</p>
+          </div>
+          <aside id="mapDetail" class="map-detail" aria-live="polite"><p>正在加载站点…</p></aside>
+        </div>
+        <div id="stationGrid" class="table-scroll"></div><div class="table-foot">查询时间：<span id="lastRefresh">—</span></div></section>
     </section>
   </main>
 </div>
 <dialog id="requestModal" class="modal" aria-labelledby="requestTitle"><form id="requestForm">
 <header><h2 id="requestTitle">新建求助</h2><button type="button" class="close-btn" data-close="requestModal" aria-label="关闭">×</button></header>
-<div class="form-body"><p class="form-note">请按实际需求填写，提交后由工作人员分配。</p><label for="district">所在辖区</label><select id="district" name="district"><option>浦东新区</option><option>徐汇区</option></select>
+<div class="form-body"><p class="form-note">请按实际需求填写，提交后由工作人员分配。</p><label for="district">所在辖区</label><select id="district" name="district"><option>象山区</option><option>七星区</option></select>
 <label for="category">物资类型</label><select id="category" name="category"><option value="WATER">饮用水</option><option value="FOOD">食品</option><option value="MEDICINE">医疗物资</option><option value="POWER">应急电力</option><option value="HYGIENE">卫生用品</option></select>
 <label for="quantity">需求数量</label><input id="quantity" name="quantity" type="number" min="1" max="10000" value="20" required>
 <fieldset><legend>紧急程度</legend><label><input type="radio" name="priority" value="NORMAL" checked> 普通</label><label><input type="radio" name="priority" value="HIGH"> 紧急</label><label><input type="radio" name="priority" value="CRITICAL"> 特急</label></fieldset></div>
@@ -67,5 +75,5 @@
 <footer><button type="button" class="ghost-btn" data-close="allocateModal">取消</button><button type="submit" class="primary-btn">确认分配</button></footer></form></dialog>
 <dialog id="detailModal" class="modal" aria-labelledby="detailTitle"><header><h2 id="detailTitle">求助详情</h2><button type="button" class="close-btn" data-close="detailModal" aria-label="关闭">×</button></header><div id="detailBody" class="form-body"></div><footer><button type="button" class="ghost-btn" data-close="detailModal">关闭</button></footer></dialog>
 <div id="toasts" class="toast-stack" aria-live="polite"></div>
-<script src="/assets/app.js" defer></script>
+<script src="/assets/station-map.js" defer></script><script src="/assets/app.js" defer></script>
 </body></html>

@@ -13,7 +13,7 @@ async function login(username,password) {
 const citizen = await login('citizen',process.env.CITIZEN_PASSWORD || 'User@123');
 const admin = await login('admin',process.env.ADMIN_PASSWORD || 'Admin@123');
 assert.equal((await call('/api/relief-requests')).status,401);
-const body = {district:'浦东新区',category:'WATER',quantity:1,priority:'NORMAL'};
+const body = {district:'象山区',category:'WATER',quantity:1,priority:'NORMAL'};
 const key = 'smoke-'+crypto.randomUUID();
 const create = (token,k,data=body) => call('/api/relief-requests',token,{method:'POST',headers:{'Idempotency-Key':k},body:JSON.stringify(data)});
 const first = await create(citizen,key);
